@@ -1,0 +1,268 @@
+#include <nana/gui.hpp>
+#include <nana/gui/widgets/label.hpp>
+#include <nana/gui/widgets/button.hpp>
+#include <nana/gui/widgets/spinbox.hpp>
+#include <nana/gui/widgets/textbox.hpp>
+#include <nana/gui/widgets/slider.hpp>
+
+using namespace nana;
+
+/**
+	void equalizer() - function that shows the equalizer's menu with all icluded settings
+	----
+	makes a window
+	allows user to on/off echo/flange (fixing buttons)
+	allows user to cut low and high frequences (of input values of cut frequences)
+	allows user to choose reverb with a slider
+	allows user to make some notes
+*/
+
+void equalizer() {
+
+
+	/*
+	----Creating window----
+	*/
+
+
+	// size of the window
+	const rectangle eq_rect = API::make_center(600, 250);
+
+	// creating the window of determined size
+	form equa(eq_rect);
+	equa.caption("Equalizer"); //giving name to the window
+
+
+	/*
+	----Creating note field----
+	*/
+
+
+	// field for notes
+	textbox notes{ equa };
+	notes.editable(true); // allow user to edit notes
+
+	//message to make user understand where the notes are
+	label note_label{ equa, "Notes:" };
+	note_label.text_align(align::right, align_v::center);
+
+
+	/*
+	----Creating Echo/Flange buttons----
+	*/
+
+
+	//message to make user understand where the echo enable/disable button is
+	label echo_label{ equa, "Echo:" };
+	echo_label.text_align(align::right, align_v::center);
+
+	//message to make user understand where the flange enable/disable button is
+	label flange_label{ equa, "Flange:" };
+	flange_label.text_align(align::right, align_v::center);
+
+	//creating echo button
+	button echo_btn{ equa };
+	echo_btn.caption("On");
+	echo_btn.enable_pushed(false);
+
+	//taking actions when the button is clicked (changing its status + enable action)
+	echo_btn.events().click([&] {
+		echo_btn.enabled(false); //disable button while taking actions
+		if (echo_btn.pushed()) { //if already pushed..
+			echo_btn.caption("On");
+			echo_btn.enable_pushed(false); 
+			/*
+				... /some code/ ...
+			*/
+		} else {
+			echo_btn.caption("Off");
+			echo_btn.enable_pushed(true);
+			/*
+				... /some code/ ...
+			*/
+		}
+		echo_btn.enabled(true); //enable button again
+		});
+
+	//creating flange button
+	button flange_btn{ equa };
+	flange_btn.caption("On");
+	flange_btn.enable_pushed(false);
+
+	//taking actions when the button is clicked (changing its status + enable action)
+	flange_btn.events().click([&] {
+		flange_btn.enabled(false); //disable button while taking actions
+		if (flange_btn.pushed()) { //if already pushed..
+			flange_btn.caption("On");
+			flange_btn.enable_pushed(false);
+			/*
+				... /some code/ ...
+			*/
+		} else {
+			flange_btn.caption("Off");
+			flange_btn.enable_pushed(true);
+			/*
+				... /some code/ ...
+			*/
+		}
+		flange_btn.enabled(true); //enable button again
+		});
+
+
+	/*
+	----Creating frequency cut fields----
+	*/
+
+	//--low frquency
+
+	//message to make user understand where to cut frequences
+	label frequency_announce_label{ equa, "Frquency cutting:" };
+	frequency_announce_label.text_align(align::center, align_v::center);
+
+	//message to tell user what physical quantities to use with sound frequency (Hz)
+	label high_herz_label{ equa, "Hz" };
+	high_herz_label.text_align(align::right, align_v::center);
+
+	//message to tell user what physical quantities to use with sound frequency (Hz)
+	label low_herz_label{ equa, "Hz" };
+	low_herz_label.text_align(align::right, align_v::center);
+
+	//message to tell user where to set low frequency cut
+	label low_frequency_label{ equa, "Low frquency cut:" };
+	low_frequency_label.text_align(align::left, align_v::center);
+
+	//creating a field for inputing low frequency cut
+	spinbox low_frequencies_spin{ equa };
+	low_frequencies_spin.range(20, 20000, 1); //setting range
+	low_frequencies_spin.editable(true); //making it possible to insert input value
+
+	//creating a button to set low frequency cut
+	button low_freq_button{ equa };
+	low_freq_button.caption("Cut!");
+
+	//taking actions when the button is clicked
+	low_freq_button.events().click([&] {
+		low_freq_button.enabled(false); //disable button while taking actions
+		float low_cut = low_frequencies_spin.to_int(); //accepting the given value
+		/*
+			.../some code/...
+		*/
+		low_freq_button.enabled(true); //enable button again
+		});
+
+	//--high frequency
+
+	//message to tell user where to set high frequency cut
+	label high_frequency_label{ equa, "High frquency cut:" };
+	high_frequency_label.text_align(align::left, align_v::center);
+
+	//creating a field for inputing high frequency cut
+	spinbox high_frequencies_spin{ equa };
+	high_frequencies_spin.range(20, 20000, 1);
+	high_frequencies_spin.editable(true);
+
+	//creating a button to set high frequency cut
+	button high_freq_button{ equa };
+	high_freq_button.caption("Cut!");
+
+	//taking actions when the button is clicked
+	high_freq_button.events().click([&] {
+		high_freq_button.enabled(false); //disable button while taking actions
+		float high_cut = low_frequencies_spin.to_int(); //accepting the given value
+		/*
+			.../some code/...
+		*/
+		high_freq_button.enabled(true); //enable button again
+		});
+
+
+	/*
+	----Creating reverb field----
+	*/
+
+
+	//message to tell user where to set reverb value
+	label reverb_label{ equa, "Convolution reverb:" };
+	reverb_label.text_align(align::center, align_v::center);
+
+	//creating a slider to allow user to chose reverb value
+	slider sld{ equa };
+
+	//creating a button for setting reverb value
+	button reverb_button{ equa };
+	reverb_button.caption("Reverb!");
+
+	//taking actions when the button is clicked
+	reverb_button.events().click([&] {
+		reverb_button.enabled(false); //disable button while taking actions
+		sld.maximum(10000); //setting maximum (we will get % in float with two symbols after dot)
+		float reverb_value = sld.value();  //accepting the given value
+		reverb_value /= 100; //counting value
+		/*
+			.../some code/...
+		*/
+		reverb_button.enabled(true); //enable button again
+		});
+
+
+	/*
+	----Showing the elements----
+	*/
+
+
+	//placing all the elements (reserve place)
+	place plc{ equa };
+	plc.div("vert <weight=35 margin=5 <arrange=[40,40] gap=10 echo><arrange=[40,40] gap=10 flange>>" // echo/flange buttons
+
+		"<weight=25 margin=[5, 20] arrange=[variable] freq_announce>" // frequency cut announce
+
+		"<weight=35 margin=[5, 20] arrange=[100, 40, variable, 40] gap = [10, 20, 10] high_frquency_cut>" // high frequency cut
+
+		"<weight=35 margin=[5, 20] arrange=[100, 40, variable, 40] gap = [10, 20, 10] low_frquency_cut>" // low frequency cut
+
+		"<weight=25 margin=[5, 20] arrange=[variable] reverb_label>" // reverb announce
+
+		"<weight=35 margin=[5, 20] arrange=[45, variable] gap = 20 reverb>" //reverb
+
+		"<weight=45 margin=5 arrange=[40,variable] gap=7 notes> " //notes
+	);
+
+	//placing the objects themselves
+
+	// echo button
+	plc["echo"] << echo_label << echo_btn;
+
+	//flange button
+	plc["flange"] << flange_label << flange_btn;
+
+	//frequency cut announce
+	plc["freq_announce"] << frequency_announce_label;
+
+	//high frequency cut
+	plc["high_frquency_cut"] << high_frequency_label << high_freq_button << high_frequencies_spin << high_herz_label;
+	
+	//low frequency cut
+	plc["low_frquency_cut"] << low_frequency_label << low_freq_button << low_frequencies_spin << low_herz_label;
+	
+	//reverb announce
+	plc["reverb_label"] << reverb_label;
+	
+	//reverb button
+	plc["reverb"] << reverb_button << sld;
+	
+	//notes
+	plc["notes"] << note_label << notes;
+
+	//building all
+	plc.collocate();
+
+	//showing the window
+	equa.show();
+
+	//exit when the window is closed
+	nana::exec();
+}
+
+int main() {
+	equalizer();
+}
