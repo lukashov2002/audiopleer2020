@@ -2,28 +2,29 @@
 #define CATCH_CONFIG_RUNNER
 
 #include "catch.hpp"
-#include "functions_for_test.hpp"
+#include "fmod_functions.hpp"
 #include <fmod.hpp>
 #include "common.h"
+#include <stdexcept>
 
 FMOD::System *system2;
 FMOD::Sound *sound;
 FMOD::Channel *channel = 0;
 
 TEST_CASE("play existing file") {
-	REQUIRE(_play_sound_(system2, sound, channel, "meow.mp3") == FMOD_OK);
+	REQUIRE(play_sound_(system2, sound, channel, ".\\media\\meow.mp3") == FMOD_OK);
 }
 
 TEST_CASE("play not existing file") {
-	FMOD_RESULT res = _play_sound_(system2, sound, channel, "meooooow.mp3");
+	FMOD_RESULT res = play_sound_(system2, sound, channel, ".\\media\\meooooow.mp3");
 	REQUIRE(res != FMOD_OK);
 }
 
 TEST_CASE("go to begin of the track") {
-	FMOD_RESULT res = _begin_of_the_track_(channel);
+	FMOD_RESULT res = begin_of_the_track_(channel);
 	unsigned t;
 	channel->getPosition(&t, FMOD_TIMEUNIT_MS);
-	bool b = (0 <= t && t < 100);
+	bool b = (0 <= t && t < 10);
 	REQUIRE(b);
 }
 
